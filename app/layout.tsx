@@ -3,8 +3,6 @@
 
 import "../styles/globals.css";
 import "../styles/tailwind.css";
-import "@rainbow-me/rainbowkit/styles.css";
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import Navbar from "./Navbar";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -18,19 +16,13 @@ export default function RootLayout({
   const { chains, provider } = configureChains(
     [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
     [
-      alchemyProvider({ apiKey: "e7cPXmSM4CN0WoDydp42aBK_SRswrWXU" }),
+      alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY as string }),
       publicProvider(),
     ]
   );
 
-  const { connectors } = getDefaultWallets({
-    appName: "My RainbowKit App",
-    chains,
-  });
-
   const wagmiClient = createClient({
     autoConnect: true,
-    connectors,
     provider,
   });
 
@@ -39,12 +31,10 @@ export default function RootLayout({
       <head></head>
       <body>
         <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider chains={chains}>
-            <div className="mx-auto">
-              <Navbar />
-              {children}
-            </div>
-          </RainbowKitProvider>
+          <div className="mx-auto">
+            <Navbar />
+            {children}
+          </div>
         </WagmiConfig>
       </body>
     </html>
